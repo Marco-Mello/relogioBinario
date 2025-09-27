@@ -48,9 +48,11 @@ Com direito a LEDs piscando, hora certinha e display OLED para deixar tudo mais 
 
 ---
 
-## 🖼️ Montagem
-![Montagem do circuito](./docs/montagem.jpg)  
-> 📌 Dica: use resistores de 330Ω para os LEDs.  
+## 🖼️ Montagem & 🎮 Demonstração
+
+![Montagem e Demo](./docs/demo.gif)  
+
+> ✨ O GIF acima mostra a protoboard montada com o Raspberry Pi Pico, o módulo RTC DS1307, o OLED SSD1306 e os LEDs funcionando em tempo real.
 
 ---
 
@@ -68,20 +70,7 @@ Com direito a LEDs piscando, hora certinha e display OLED para deixar tudo mais 
    make
    ```
 3. Grave o `.uf2` no Pico (modo BOOTSEL).  
-4. Pronto! 🎉 O relógio começa a rodar.  
-
----
-
-## 🎮 Funcionamento
-- ⏲️ LEDs piscam mostrando horas, minutos e segundos em **binário**  
-- 🔀 Chave no GP28 alterna entre **24h** e **12h (AM/PM)**  
-- 💡 LED no GP27 indica quando está em modo 12h  
-- 🖥️ OLED mostra a hora em formato digital  
-
----
-
-## 🤓 Demonstração
-![GIF de funcionamento](./docs/demo.gif)  
+4. 🎉 Pronto, o relógio começa a rodar!  
 
 ---
 
