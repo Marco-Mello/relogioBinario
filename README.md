@@ -56,6 +56,22 @@ Com direito a LEDs piscando, hora certinha e display OLED para deixar tudo mais 
 
 ---
 
+## 🧑‍💻 Simulação no Wokwi
+
+Este projeto também pode ser testado **online no Wokwi** 🎉  
+
+👉 [Abrir simulação no Wokwi](https://wokwi.com/projects/443259630841226241)
+
+Além disso, todos os arquivos da simulação estão disponíveis neste repositório:  
+
+```
+wokwi_simulation/relogioBinario/
+```
+
+Basta abrir a pasta no [Wokwi](https://wokwi.com/) e rodar a simulação direto no navegador 🚀
+
+---
+
 ## 🚀 Como rodar
 1. Clone este repositório:
    ```bash
