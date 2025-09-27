@@ -50,7 +50,7 @@ Com direito a LEDs piscando, hora certinha e display OLED para deixar tudo mais 
 
 ## 🖼️ Montagem & 🎮 Demonstração
 
-![Montagem e Demo](./docs/demo.gif)  
+![Montagem e Demo](./imgs/relogioBinarioDemo.gif)  
 
 > ✨ O GIF acima mostra a protoboard montada com o Raspberry Pi Pico, o módulo RTC DS1307, o OLED SSD1306 e os LEDs funcionando em tempo real.
 
