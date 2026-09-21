@@ -75,7 +75,7 @@ Basta abrir a pasta no [Wokwi](https://wokwi.com/) e rodar a simulação direto 
 ## 🚀 Como rodar
 1. Clone este repositório:
    ```bash
-   git clone https://github.com/seu-usuario/relogio-binario.git
+   git clone https://github.com/Marco-Mello/relogioBinario.git
    cd relogio-binario
    ```
 2. Configure o **Pico SDK** e compile:

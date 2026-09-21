@@ -1,7 +1,9 @@
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include <stdio.h>
-#include "ssd1306.h"   // driver SSD1306 (seu ssd1306.h/.c precisam estar no projeto)
+#include <string.h>
+#include "ssd1306.h"
+#include "wifi_ntp.h"
 
 #define I2C_RTC i2c0
 #define SDA_RTC 4
@@ -106,6 +108,61 @@ void oled_mostrar_hora(int h, int m, int s, bool modo_ampm) {
 }
 
 // =====================================================================
+// Processa comando serial para atualizar hora
+// Formato esperado: "SET HH:MM:SS"
+void processar_comando_serial() {
+    char buffer[128];
+    int idx = 0;
+
+    if (stdio_usb_connected()) {
+        // Lê entrada do terminal
+        int ch;
+        while (idx < sizeof(buffer) - 1) {
+            ch = getchar_timeout_us(100000); // Timeout 100ms
+            if (ch == PICO_ERROR_TIMEOUT) break;
+            if (ch == '\r' || ch == '\n') break;
+            buffer[idx++] = ch;
+        }
+        buffer[idx] = '\0';
+
+        // Verifica se comando começa com "SET "
+        if (strncmp(buffer, "SET ", 4) == 0) {
+            int h, m, s;
+            if (sscanf(&buffer[4], "%d:%d:%d", &h, &m, &s) == 3) {
+                // Valida valores
+                if (h >= 0 && h < 24 && m >= 0 && m < 60 && s >= 0 && s < 60) {
+                    ajustar_hora(h, m, s);
+                    printf("✓ Hora atualizada para %02d:%02d:%02d\n", h, m, s);
+                } else {
+                    printf("✗ Valores inválidos! Use: SET HH:MM:SS (00-23:00-59:00-59)\n");
+                }
+            } else {
+                printf("✗ Formato inválido! Use: SET HH:MM:SS\n");
+            }
+        }
+        // Processa comando WiFi
+        else if (strncmp(buffer, "WIFI ", 5) == 0) {
+            processar_comando_wifi(buffer);
+        }
+        // Processa comando de sincronização
+        else if (strncmp(buffer, "SYNC", 4) == 0) {
+            processar_comando_sync(buffer);
+        }
+        // Mostra menu se comando não reconhecido
+        else if (buffer[0] != '\0') {
+            printf("╔════════════════════════════════════════╗\n");
+            printf("║      Comandos Disponíveis             ║\n");
+            printf("╠════════════════════════════════════════╣\n");
+            printf("║  SET HH:MM:SS       → Atualizar hora  ║\n");
+            printf("║  WIFI ssid password → Conectar WiFi   ║\n");
+            printf("║  SYNC               → Sincronizar NTP ║\n");
+            printf("║  SYNCINTERVAL min   → Intervalo (min) ║\n");
+            printf("╚════════════════════════════════════════╝\n");
+        }
+    }
+}
+
+// =====================================================================
 int main() {
     stdio_init_all();
 
@@ -141,13 +198,27 @@ int main() {
     oled_init();
 
     printf("Relogio binario iniciado...\n");
-
-    // ⚠️ Ajusta hora inicial em 13h00m00s (use uma vez só)
-    ajustar_hora(13, 0, 0);
+    printf("╔════════════════════════════════════════╗\n");
+    printf("║      Comandos Disponíveis             ║\n");
+    printf("╠════════════════════════════════════════╣\n");
+    printf("║  SET HH:MM:SS       → Atualizar hora  ║\n");
+    printf("║  WIFI ssid password → Conectar WiFi   ║\n");
+    printf("║  SYNC               → Sincronizar NTP ║\n");
+    printf("║  SYNCINTERVAL min   → Intervalo (min) ║\n");
+    printf("╚════════════════════════════════════════╝\n\n");
 
     while (true) {
         int h, m, s;
         ler_hora(&h, &m, &s);
+
+        // Processa comandos recebidos pela serial
+        processar_comando_serial();
+
+        // Sincroniza hora com NTP se WiFi conectado e intervalo passou
+        if (should_sync_ntp()) {
+            printf("🌐 Sincronizando com NTP...\n");
+            sync_ntp_time();
+        }
 
         bool modo_ampm = (gpio_get(SWITCH_AMP) == 0);
 
